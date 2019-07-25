@@ -26,11 +26,22 @@ export const getNamiEnterprise = functions.https.onRequest((request, response) =
 
 export const getListItems = functions.https.onRequest((request, response) => {
     admin.firestore().collection('items').get().then(function (querySnapshot) {
-        querySnapshot.forEach(function(doc){
+        querySnapshot.forEach(function (doc) {
             console.log(doc.id, ' => ', doc.data());
         });
     }).catch(error => {
         console.log(error);
         response.status(500).send(error);
+    });
+});
+
+export const getItemById = functions.https.onRequest((request, respond) => {
+    const uid = request.body.id;
+    const doc = admin.firestore().doc(`items/${uid}`);
+
+    doc.get().then(snapshot => {
+        respond.send(snapshot.data());
+    }).catch(error => {
+        respond.status(500).send(error);
     });
 });
